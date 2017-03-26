@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<!--
+公式サイト http://angularjs.org/
+youtube http://www.youtube.com/playlist?list=PLF3A4172FB9373CFE
+参考サイトまとめ http://www.ideaxidea.com/archives/2012/08/angularjs_matome.html
+-->
+<html lang="ja" ng-app>
+  <head>
+    <!-- URLs are from https://developers.google.com/speed/libraries/devguide?hl=ja -->
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.15/angular.min.js"></script>
+    <!-- AngularJS does not depend on jquery. This is just for show() and other commands -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+    <script src="myscript.js"></script>
+    <style>
+      .even { background: #bbb; }
+      .odd  { background: yellow;  }
+    </style>
+  </head>
+  <body>
+    <h2>AngularJS Practice(Angular JSで実装されています)</h2>
+
+    <span style="font-size: 20px">Calculation / Currency expression</span>
+    <a href="#" id="cal_show">show</a>
+    <div id="cal">
+      <input type="text" ng-model="name">
+      <p>  {{name}} x 5 = {{5 * name }} </p>
+      <p>$:{{name}} x 5 = {{5 * name|currency}}</p>
+    </div>
+    <hr>
+
+    <span style="font-size: 20px">List / Realtime Filtering</span>
+    <a href="#" id="list_show">show</a>
+    <div ng-controller="mainCtrl" id="list">
+      <p>{{ users.length }} users</p>
+      No.:  name:  point
+      <ul>
+        <!-- 「user in users」このように書くと、usersから一つ一つ値を取り出してuserに入れる -->
+        <li ng-repeat ="user in users|orderBy:'score'" ng-class-even="'even'" ng-class-odd="'odd'">{{$index + 1}}: {{ user.name }} : {{ user.score }} </li>
+      </ul>
+      <ul>
+        <li ng-repeat ="user in users|orderBy:'score'|limitTo:5" ng-controller="UserItemCtrl">{{ user.name|uppercase }} {{ user.score|number:1 }} 
+          <button ng-click="increment()">+1</button>
+          <button ng-click="user.score = user.score - 1">-1</button>
+        </li>
+      </ul>
+
+
+      <!-- もし「query1.name」を「query1」とすると、名前だけではなくscoreでもfilteringする -->
+      realtime name filtering: <input type="text" ng-model="query1.name"> <!-- nameはusers.nameのname-->
+      <ul>
+        <li ng-repeat ="user in users|filter:query1">{{ user.name|uppercase }} {{ user.score|number:1 }} </li>
+      </ul>
+      <hr>
+
+      <span style="font-size: 20px">Form Validation / Realtime Jsonize</span>
+      <form novalidate name = "myForm" ng-submit="addUser()" id="myForm"> <!-- 'novalidate': disable html5's validation (not AngularJS's validation) -->
+
+        <p>Name:
+          <!-- ここでは、コントロール側とメッセージ側で名前の結びつきがある -->
+          <input type="text" name="name" ng-model="user.name" required ng-minlength="5" ng-maxlength="20">
+          <span ng-show="myForm.name.$error.required">Required!</span>
+          <span ng-show="myForm.name.$error.minlength">Too short!</span>
+          <span ng-show="myForm.name.$error.maxlength">Too long!</span>
+        </p>
+
+        <p>Score:
+          <input type="number" name="score" ng-model="user.score">
+        </p>
+
+        <p>Age(Adult):
+          <input type="checkbox" ng-model="user.adult" ng-true-value="adult" ng-false-value="child">
+        </p>
+
+        <p>Phone:
+          <input type="radio" ng-model="user.phone" value="iPhone"> iPhone
+          <input type="radio" ng-model="user.phone" value="Android"> Android
+        </p>
+
+        <p>Color:
+          <select ng-model="user.color" ng-options="color for color in ['red', 'blue', 'green']" ng-init="user.color='red'"></select>
+        </p>
+
+        <p>Memo:
+          <textarea ng-model="user.memo" ng-maxlength="140"></textarea>{{140-user.memo.length}}
+        </p>
+
+        <!-- input typeがemailになっていることに注意（次のurlも） -->
+        <p>Email:
+          <input type="email" name="email" ng-model="user.email">
+          <span ng-show="myForm.email.$error.email">Not Valid Email!</span>
+        </p>
+
+        <p>URL:
+          <input type="url" name="url" ng-model="user.url">
+          <span ng-show="myForm.url.$error.url">Not Valid URL!</span>
+        </p>
+        
+        </p>
+        <pre>{{user|json}}</pre>
+      </form>
+      </div> <!-- myForm -->
+    </div> <!-- mainCtrl -->
+    <hr>
+    
+<!--
+    <span style="font-size: 20px">Controller / Model</span>
+    <a href="#" id="cont_show">show</a>
+-->
+    <!-- divでコントローラの有効な範囲を指定する -->
+<!--
+    <div ng-controller="todayCtrl" id="cont">
+      <p>today:{{today|date:'yyyy-MM-dd hh:mm:ss'}}</p>
+    </div>
+    <hr>
+-->
+
+    <script>
+      $(function() {
+        $('#cal').hide();
+        $('#cont').hide();
+        $('#list').hide();
+      });
+      $('#cal_show').click(function() { $('#cal').show(500) });
+      $('#cont_show').click(function() { $('#cont').show(300) });
+      $('#list_show').click(function() { $('#list').fadeIn(500) });
+    </script>
+
+  </body>
+</html>
